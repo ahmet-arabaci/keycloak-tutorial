@@ -1,6 +1,9 @@
 package com.ahmetarabaci.keycloakservice.controller;
 
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.keycloak.representations.AccessToken;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtClaimNames;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -72,5 +75,15 @@ public class KeycloakController {
 	public String checkTime() {
 		return "API: '/test/time' | 'user6' has been authorized.";
 	}
+	
+	@GetMapping("/tokendetails")
+	public String getTokenDetails(@AuthenticationPrincipal Jwt jwt) {
+		return "API '/test/tokendetails' | Request has been executed successfully!" 
+				+ "\n JWT Subject: " + jwt.getSubject()
+				+ "\n JWT ISS: " + jwt.getClaim(JwtClaimNames.ISS)
+				+ "\n JWT Preferred Username: " + jwt.getClaim(AccessToken.PREFERRED_USERNAME) 
+				+ "\n JWT AZP: " + jwt.getClaim(AccessToken.AZP);
+	}
+	
 }
 

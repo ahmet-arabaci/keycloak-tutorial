@@ -46,17 +46,15 @@ public class KeycloakConfig {
 		});		
 		*/
 		
-		// OAuth2 Resource Server
-		/*
+		// OAuth2 Resource Server		
 		http.oauth2ResourceServer(t -> {
 			// 1st WAY : JWT ISSUER
-			// t.jwt(Customizer.withDefaults());
+			t.jwt(Customizer.withDefaults());
 			// t.jwt(configurer -> configurer.jwtAuthenticationConverter(customJWTAuthConverter));
 
 			// 2nd WAY: OPAQUETOKEN
 			// t.opaqueToken(Customizer.withDefaults());	
-		});		
-		*/
+		});				
 		
 		http.addFilterAfter(getServletPolicyEnforcerFilter(), BearerTokenAuthenticationFilter.class);
 		http.sessionManagement(t -> { t.sessionCreationPolicy(SessionCreationPolicy.STATELESS); });

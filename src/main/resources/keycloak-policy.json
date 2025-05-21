@@ -3,7 +3,7 @@
 	"auth-server-url": "http://localhost:8080",
 	"resource": "custom-client",
 	"credentials": {
-		"secret": "q3kPNuEni6cRqxxawIpoEVK39CFoDa1n"
+		"secret": "aNT4wYJaiPn97S5jAVsgFV3Qjjcs2fw0"
 	},
 	"http-method-as-scope": true,
 	"paths":  [

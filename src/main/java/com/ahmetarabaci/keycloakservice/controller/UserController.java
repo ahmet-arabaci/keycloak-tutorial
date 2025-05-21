@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.ahmetarabaci.keycloakservice.model.RoleDto;
 import com.ahmetarabaci.keycloakservice.model.UserDto;
 import com.ahmetarabaci.keycloakservice.service.KeycloakAdminUtil;
 
@@ -95,6 +98,58 @@ public class UserController {
 			LOGGER.error("Exception occurred while executing deleteUser function!", e);
 			return "Exception occurred while executing deleteUser function!";
 		}
+	}
+	
+	@GetMapping("/roles/{id}")
+	public String getUserRoles(@PathVariable("id") String id) {
+		try {
+			Keycloak keycloak = util.getInstance();
+			List<RoleRepresentation> roleRepList = keycloak.realm(realm).users().get(id)
+					.roles().realmLevel().listAll();
+			for (RoleRepresentation roleRep : roleRepList) {
+				LOGGER.info(String.format("Role ID: %s, Role Name: %s, Role Description: %s", 
+						roleRep.getId(), roleRep.getName(), roleRep.getDescription()));
+			}
+			
+			return "User roles have been received successfully.";
+		} catch (Exception e) {
+			LOGGER.error("Exception occurred while executing getUserRoles function!", e);
+			return "Exception occurred while executing getUserRoles function!";
+		}
+	}
+	
+	@PostMapping("/roles/remove")
+	public String removeUserRoles(@RequestBody RoleDto dto) {
+		try {
+			Keycloak keycloak = util.getInstance();
+			keycloak.realm(realm).users().get(dto.getUserId()).roles().realmLevel()
+				.remove(List.of(map(dto)));
+			return "User role has been removed successfully!";
+		} catch (Exception e) {
+			LOGGER.error("Exception occurred while executing removeUserRoles function!", e);
+			return "Exception occurred while executing removeUserRoles function!";
+		}
+	}
+	
+	@PostMapping("/roles/add")
+	public String addUserRoles(@RequestBody RoleDto dto) {
+		try {
+			Keycloak keycloak = util.getInstance();
+			keycloak.realm(realm).users().get(dto.getUserId()).roles().realmLevel()
+				.add(List.of(map(dto)));
+			return "User role has been added successfully!";
+		} catch (Exception e) {
+			LOGGER.error("Exception occurred while executing addUserRoles function!", e);
+			return "Exception occurred while executing addUserRoles function!";
+		}
+	}
+	
+	private RoleRepresentation map(RoleDto dto) {
+		RoleRepresentation roleRep = new RoleRepresentation();
+		roleRep.setId(dto.getId());
+		roleRep.setName(dto.getName());
+		roleRep.setDescription(dto.getDescription());
+		return roleRep;
 	}
 	
 	private UserRepresentation map(UserDto dto) {
